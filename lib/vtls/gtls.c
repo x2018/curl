@@ -1453,7 +1453,12 @@ static CURLcode gtls_verify_ocsp_status(struct Curl_easy *data,
     goto out;
   }
 
-  gnutls_ocsp_resp_init(&ocsp_resp);
+  rc = gnutls_ocsp_resp_init(&ocsp_resp);
+  if(rc < 0) {
+    failf(data, "Failed to initialize OCSP response structure");
+    result = CURLE_SSL_INVALIDCERTSTATUS;
+    goto out;
+  }
 
   rc = gnutls_ocsp_resp_import(ocsp_resp, &status_request);
   if(rc < 0) {
